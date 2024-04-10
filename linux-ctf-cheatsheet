@@ -1,6 +1,5 @@
 LINUX CTF cheatsheet
 
-
 RECON:
 
 Portscanning{
@@ -26,7 +25,6 @@ fuzzing{
 # web fuzzing
     ffuf -u http://website/FUZZ -w  [path/to/file]
     
-
 
 }
 
@@ -139,6 +137,9 @@ PRIVESC:
 
 stablise shell{
     python -c 'import pty; pty.spawn("/bin/bash")'
+    or
+    python3 -c 'import pty; pty.spawn("/bin/bash")'
+    
     ctrl+z
     stty raw -echo;fg
     enter
@@ -148,7 +149,9 @@ LOOKING AROUND{
 # find suid binarys
     find /  -perm -u=s -type f 2>/dev/null
     find / -perm /4000 2>/dev/null
-    #finding files for specified user
+#  find capabilities
+    getcap -r / 2>/dev/null
+#   finding files for specified user
     find / -type f -user #USER -type f 2>/dev/null
 # finding flags
     find / -name "*user.txt" -o -name ".flag*" -exec cat {} \; 2>/dev/null 
