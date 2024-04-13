@@ -1,5 +1,6 @@
 LINUX CTF cheatsheet
 
+
 RECON:
 
 Portscanning{
@@ -18,7 +19,7 @@ VHOST{
     gobuster vhost -d domain  --wordlist [path/to/file]
 }
  subdomain{
-    gobuster vhost --url [https://example.com/] --wordlist [path/to/file]
+    ffuf -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-110000.txt -u DOMAIN -H "Host:FUZZ.DOMAIN -fw 6
  
  }
 fuzzing{
@@ -137,9 +138,7 @@ PRIVESC:
 
 stablise shell{
     python -c 'import pty; pty.spawn("/bin/bash")'
-    or
     python3 -c 'import pty; pty.spawn("/bin/bash")'
-    
     ctrl+z
     stty raw -echo;fg
     enter
