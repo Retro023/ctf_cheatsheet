@@ -19,7 +19,7 @@ VHOST{
     gobuster vhost -d domain  --wordlist [path/to/file]
 }
  subdomain{
-    ffuf -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-110000.txt -u DOMAIN -H "Host:FUZZ.DOMAIN -fw 6
+    ffuf -w /usr/share/wordlists/SecLists/Discovery/DNS/subdomains-top1million-110000.txt -u DOMAIN -H "Host:FUZZ.DOMAIN" -fw 6
  
  }
 fuzzing{
